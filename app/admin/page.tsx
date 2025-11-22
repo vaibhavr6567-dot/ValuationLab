@@ -15,8 +15,6 @@ type Report = {
   createdAt: string;
 };
 
-const ADMIN_USERNAME = "admin";
-const ADMIN_PASSWORD = "admin123";
 const AUTH_KEY = "valuation_admin_auth_v1";
 
 export default function AdminPage() {
@@ -25,7 +23,6 @@ export default function AdminPage() {
 
   const [reports, setReports] = useState<Report[]>([]);
 
-  // form state
   const emptyForm = {
     title: "",
     subtitle: "",
@@ -39,8 +36,11 @@ export default function AdminPage() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
+  // password visibility toggle state
+  const [showPassword, setShowPassword] = useState(false);
+
   useEffect(() => {
-    const val = localStorage.getItem(AUTH_KEY);
+    const val = typeof window !== "undefined" ? localStorage.getItem(AUTH_KEY) : null;
     setIsAuthed(!!val);
     setLoading(false);
     if (val) {
@@ -49,20 +49,47 @@ export default function AdminPage() {
   }, []);
 
   async function fetchReports() {
-    const res = await fetch("/api/reports");
-    const data = await res.json();
-    setReports(data || []);
+    try {
+      const res = await fetch("/api/reports");
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: "failed" }));
+        setMessage(err?.error || "Failed to load reports");
+        setTimeout(() => setMessage(null), 1500);
+        return;
+      }
+      const data = await res.json();
+      setReports(Array.isArray(data) ? data : []);
+    } catch (e) {
+      console.error("fetchReports error:", e);
+      setMessage("Network error");
+      setTimeout(() => setMessage(null), 1500);
+    }
   }
 
-  function login(username: string, password: string) {
-    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-      localStorage.setItem(AUTH_KEY, "1");
-      setIsAuthed(true);
-      fetchReports();
-      setMessage("Logged in");
-      setTimeout(() => setMessage(null), 1500);
-    } else {
-      setMessage("Invalid credentials");
+  async function login(username: string, password: string) {
+    try {
+      const res = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (res.ok && data?.success) {
+        localStorage.setItem(AUTH_KEY, "1");
+        setIsAuthed(true);
+        fetchReports();
+        setMessage("Logged in");
+        setTimeout(() => setMessage(null), 1500);
+      } else {
+        const errMsg = data?.error || "Invalid credentials";
+        setMessage(errMsg);
+        setTimeout(() => setMessage(null), 2000);
+      }
+    } catch (err) {
+      console.error("login error:", err);
+      setMessage("Network error");
       setTimeout(() => setMessage(null), 2000);
     }
   }
@@ -88,7 +115,7 @@ export default function AdminPage() {
         body: JSON.stringify(payload),
       });
       if (!res.ok) {
-        const err = await res.json();
+        const err = await res.json().catch(() => ({ error: "failed" }));
         setMessage(err?.error || "Failed");
       } else {
         const newr = await res.json();
@@ -128,7 +155,7 @@ export default function AdminPage() {
         body: JSON.stringify(form),
       });
       if (!res.ok) {
-        const err = await res.json();
+        const err = await res.json().catch(() => ({ error: "failed" }));
         setMessage(err?.error || "Failed");
       } else {
         const updated = await res.json();
@@ -150,7 +177,8 @@ export default function AdminPage() {
     try {
       const res = await fetch(`/api/reports/${id}`, { method: "DELETE" });
       if (!res.ok) {
-        setMessage("Failed to delete");
+        const err = await res.json().catch(() => ({ error: "failed" }));
+        setMessage(err?.error || "Failed to delete");
       } else {
         setReports((p) => p.filter((r) => r.id !== id));
         setMessage("Deleted");
@@ -162,7 +190,6 @@ export default function AdminPage() {
     }
   }
 
-  // login form state
   const [loginUser, setLoginUser] = useState("");
   const [loginPass, setLoginPass] = useState("");
 
@@ -173,7 +200,7 @@ export default function AdminPage() {
       <main className="min-h-screen bg-[#0f1724] text-slate-100 flex items-center justify-center">
         <div className="max-w-md w-full bg-white/6 rounded-xl p-8">
           <h2 className="text-2xl font-bold mb-4">Admin Login</h2>
-          <p className="text-sm text-slate-200 mb-6">Enter hard-coded credentials to continue.</p>
+          <p className="text-sm text-slate-200 mb-6">Enter credentials to continue.</p>
 
           <div className="space-y-3">
             <input
@@ -182,13 +209,26 @@ export default function AdminPage() {
               placeholder="username"
               className="w-full px-4 py-2 rounded bg-white/5 border border-white/8"
             />
-            <input
-              value={loginPass}
-              onChange={(e) => setLoginPass(e.target.value)}
-              placeholder="password"
-              type="password"
-              className="w-full px-4 py-2 rounded bg-white/5 border border-white/8"
-            />
+
+            {/* password row with show/hide button */}
+            <div className="relative">
+              <input
+                value={loginPass}
+                onChange={(e) => setLoginPass(e.target.value)}
+                placeholder="password"
+                type={showPassword ? "text" : "password"}
+                className="w-full px-4 py-2 rounded bg-white/5 border border-white/8 pr-12"
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowPassword((s) => !s)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-sm rounded bg-white/6"
+              >
+                {showPassword ? " Hide" : " Show"}
+              </button>
+            </div>
 
             <div className="flex gap-3 items-center">
               <button
@@ -198,7 +238,7 @@ export default function AdminPage() {
                 Login
               </button>
 
-              <div className="text-sm text-slate-300">Use <span className="font-medium">admin / admin123</span></div>
+            
             </div>
 
             {message && <div className="text-sm text-amber-100 mt-2">{message}</div>}
@@ -208,7 +248,7 @@ export default function AdminPage() {
     );
   }
 
-  // Admin panel UI
+  // Admin panel UI remains exactly as you have it
   return (
     <main className="min-h-screen bg-[#0f1724] text-slate-100">
       <div className="max-w-6xl mx-auto px-6 py-12">
