@@ -1,6 +1,7 @@
 // app/contact/page.tsx
 import Link from "next/link";
 import React from "react";
+import Footer from "../component/Footer";
 
 export const metadata = {
   title: "Contact — Valuation Lab",
@@ -9,6 +10,7 @@ export const metadata = {
 
 export default function ContactPage() {
   return (
+    <>
     <main className="min-h-screen flex flex-col justify-between bg-[#0f1724] text-slate-100">
       <section className="max-w-7xl mx-auto w-full px-6 py-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
@@ -79,5 +81,8 @@ export default function ContactPage() {
 
  
     </main>
+    <Footer/>
+
+   </>
   );
 }

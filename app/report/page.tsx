@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Footer from "../component/Footer";
 
 type Report = {
   id: string;
@@ -42,6 +43,7 @@ export default function ReportsPage() {
   }, []);
 
   return (
+    <>
     <main className="min-h-screen bg-[#0f1724] text-slate-100 py-12">
       <div className="max-w-7xl mx-auto px-6">
         <div className="mb-8">
@@ -121,5 +123,7 @@ export default function ReportsPage() {
         )}
       </div>
     </main>
+    <Footer/>
+   </>
   );
 }
