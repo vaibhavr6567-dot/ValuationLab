@@ -65,18 +65,11 @@ export default function ContactPage() {
       </p>
     </div>
 
-    <div>
-      <p className="text-sm font-semibold tracking-wide text-[#d7b37c] uppercase mb-2">
-        Primary Email
-      </p>
-      <p className="text-lg font-medium text-slate-100 break-all">
-        vaibhavrai6567@gmail.com
-      </p>
-    </div>
+
 
     <div>
       <p className="text-sm font-semibold tracking-wide text-[#d7b37c] uppercase mb-2">
-        Alternate Email
+         Email
       </p>
       <p className="text-lg font-medium text-slate-100 break-all">
         vaibhavvrai2025@gmail.com
