@@ -2,6 +2,7 @@
 import Link from "next/link";
 import React from "react";
 import Footer from "../component/Footer";
+import { Linkedin } from "lucide-react";
 
 export const metadata = {
   title: "Contact — Valuation Lab",
@@ -48,33 +49,57 @@ export default function ContactPage() {
           </div>
 
           {/* RIGHT: Contact Card */}
-          <div className="bg-white/5 border border-white/10 backdrop-blur-sm rounded-2xl p-8 shadow-xl">
-            <h2 className="text-3xl font-extrabold text-white mb-8">
-              Contact Details
-            </h2>
+{/* RIGHT: Contact Card */}
+<div className="bg-white/5 border border-white/10 backdrop-blur-sm rounded-2xl p-8 shadow-xl">
+  <h2 className="text-3xl font-extrabold text-white mb-8">
+    Contact Details
+  </h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-              <div>
-                <p className="text-sm font-semibold tracking-wide text-[#d7b37c] uppercase mb-2">
-                  Phone
-                </p>
-                <p className="text-lg font-medium text-slate-100">
-                  +91 8100065968
-                </p>
-              </div>
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+    <div>
+      <p className="text-sm font-semibold tracking-wide text-[#d7b37c] uppercase mb-2">
+        Phone
+      </p>
+      <p className="text-lg font-medium text-slate-100">
+        +91 8100065968
+      </p>
+    </div>
 
-              <div>
-                <p className="text-sm font-semibold tracking-wide text-[#d7b37c] uppercase mb-2">
-                  Email
-                </p>
-                <p className="text-lg font-medium text-slate-100 break-all">
-                  vaibhavrai6567@gmail.com
-                </p>
-              </div>
-            </div>
+    <div>
+      <p className="text-sm font-semibold tracking-wide text-[#d7b37c] uppercase mb-2">
+        Primary Email
+      </p>
+      <p className="text-lg font-medium text-slate-100 break-all">
+        vaibhavrai6567@gmail.com
+      </p>
+    </div>
 
-   
-          </div>
+    <div>
+      <p className="text-sm font-semibold tracking-wide text-[#d7b37c] uppercase mb-2">
+        Alternate Email
+      </p>
+      <p className="text-lg font-medium text-slate-100 break-all">
+        vaibhavvrai2025@gmail.com
+      </p>
+    </div>
+
+    <div>
+  <p className="text-sm font-semibold tracking-wide text-[#d7b37c] uppercase mb-2">
+    LinkedIn
+  </p>
+  <Link
+    href="https://www.linkedin.com/in/vaibhav-rai-a67459392/"
+    target="_blank"
+    className="flex items-center gap-2 text-lg font-medium text-slate-100 hover:text-[#d7b37c] transition"
+  >
+    <Linkedin className="w-5 h-5" />
+    <span>View Profile</span>
+  </Link>
+</div>
+
+  </div>
+</div>
+
 
         </div>
       </section>
